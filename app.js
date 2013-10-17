@@ -3,6 +3,31 @@ var request = require("request");
 
 var app = express();
 
+var allowedHosts = ['http://localhost:3000', 'http://tapastreet-facebook.herokuapp.com'];
+
+var allowCrossDomain = function(req, res, next) {
+
+    if(allowedHosts.indexOf(req.headers.origin) !== -1) {
+        res.header('Access-Control-Allow-Credentials', true);
+        res.header('Access-Control-Allow-Origin', req.headers.origin);
+        res.header('Access-Control-Allow-Methods', 'GET');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+        // intercept OPTIONS method
+        if ('OPTIONS' == req.method) {
+            res.send(200);
+        } else {
+            next();
+        }
+
+    } else {
+        res.send(401);
+    }
+}
+
+app.configure(function() {
+    app.use(allowCrossDomain);
+});
+
 app.get("/batch", function(req, res) {
     if(!req.param("data")) res.send("No data");
     var data = req.param("data");
