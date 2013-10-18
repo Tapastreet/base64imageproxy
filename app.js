@@ -1,12 +1,12 @@
 var express = require("express");
 var request = require("request");
+var _ = require("underscore");
  
 var app = express();
 
 var allowedHosts = ['http://localhost:3000', 'http://tapastreet-facebook.herokuapp.com'];
 
 var allowCrossDomain = function(req, res, next) {
-    console.log(req.headers.origin);
     if(allowedHosts.indexOf(req.headers.origin) !== -1 || true) {
         res.header('Access-Control-Allow-Credentials', true);
         res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
@@ -25,32 +25,37 @@ var allowCrossDomain = function(req, res, next) {
 }
 
 app.configure(function() {
+    app.use(express.logger());
+    app.use(express.methodOverride());
+    app.use(express.bodyParser());
     app.use(allowCrossDomain);
 });
 
-app.get("/batch", function(req, res) {
+app.post("/batch", function(req, res) {
     if(!req.param("data")) res.send("No data");
-    var data = req.param("data");
+    var data = req.body.data;
 
-    if(!Array.isArray(data)) {
-        data = [data];
-    }
-
-    var pending = data.length;
+    var pending = req.body.length;
     var images = Object.create(null);
 
-    data.forEach(function(current, index) {
-        request({ uri: current, encoding: 'binary'}, function(error, response, body) {
+    _.each(data, function(current, index) {
+        request.get(current.url, function(error, response, body) {
             var prefix, image;
             
             if(!error && response.statusCode == 200) {
                 prefix = "data:" + response.headers["content-type"] + ";base64,";
                 image = new Buffer(body.toString(), "binary").toString("base64");
-                images[current] = prefix + image;
+                images[current.id] = {
+                    id: current.id,
+                    base64 : prefix + image
+                };
             } else {
-                console.log(error);
-                console.log("There was an error");
-                images[current] = null;
+                images[current.id] = {
+                    id: current.id,
+                    base64 : null,
+                    url : current.url
+                };
+
             }
 
             if(!--pending) {
