@@ -39,7 +39,7 @@ app.post("/batch", function(req, res) {
     var images = Object.create(null);
 
     _.each(data, function(current, index) {
-        request.get(current.url, function(error, response, body) {
+        request({uri: current.url, encoding: "binary"}, function(error, response, body) {
             var prefix, image;
             
             if(!error && response.statusCode == 200) {
