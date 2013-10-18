@@ -1,12 +1,9 @@
-var express = require("express");
-var request = require("request");
-var _ = require("underscore");
- 
-var app = express();
-
-var allowedHosts = ['http://localhost:3000', 'http://tapastreet-facebook.herokuapp.com'];
-
-var allowCrossDomain = function(req, res, next) {
+var express = require("express"),
+    request = require("request"),
+    _ = require("underscore"),
+    app = express(),
+    allowedHosts = ['http://tapastreet-facebook.herokuapp.com', 'https://tapastreet-facebook.herokuapp.com'],
+    allowCrossDomain = function(req, res, next) {
     if(allowedHosts.indexOf(req.headers.origin) !== -1 || true) {
         res.header('Access-Control-Allow-Credentials', true);
         res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
@@ -25,18 +22,15 @@ var allowCrossDomain = function(req, res, next) {
 }
 
 app.configure(function() {
-    app.use(express.logger());
-    app.use(express.methodOverride());
     app.use(express.bodyParser());
     app.use(allowCrossDomain);
 });
 
 app.post("/batch", function(req, res) {
     if(!req.param("data")) res.send("No data");
-    var data = req.body.data;
-
-    var pending = req.body.length;
-    var images = Object.create(null);
+    var data = req.body.data,
+        pending = req.body.length,
+        images = Object.create(null);
 
     _.each(data, function(current, index) {
         request({uri: current.url, encoding: "binary"}, function(error, response, body) {
