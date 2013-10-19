@@ -16,13 +16,17 @@ var express = require("express"),
         }
 
     } else {
-        res.send(401);
+        res.send("Nope.",401);
     }
 }
 
 app.configure(function() {
     app.use(express.bodyParser());
     app.use(allowCrossDomain);
+});
+
+app.get("/", function(req, res) {
+    res.send("<h1 style='text-align:center;'><a href='https://github.com/Tapastreet/base64imageproxy'></a></h1>");   
 });
 
 app.post("/batch", function(req, res) {
