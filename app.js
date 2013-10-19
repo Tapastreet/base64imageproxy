@@ -26,7 +26,7 @@ app.configure(function() {
 });
 
 app.get("/", function(req, res) {
-    res.send("<h1 style='text-align:center;'><a href='https://github.com/Tapastreet/base64imageproxy'></a></h1>");   
+    res.send("<h1 style='text-align:center;'><a href='https://github.com/Tapastreet/base64imageproxy'>Node.js imageURL to base64 proxy server.</a></h1>");   
 });
 
 app.post("/batch", function(req, res) {
