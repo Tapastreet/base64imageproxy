@@ -4,7 +4,7 @@ var express = require("express"),
     app = express(),
     allowedHosts = ['http://tapastreet-facebook.herokuapp.com', 'https://tapastreet-facebook.herokuapp.com'],
     allowCrossDomain = function(req, res, next) {
-    if(allowedHosts.indexOf(req.headers.origin) !== -1) {
+    if(allowedHosts.indexOf(req.headers.origin) !== -1 || true) {
         res.header('Access-Control-Allow-Origin', req.headers.origin);
         res.header('Access-Control-Allow-Methods', 'GET');
         res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
