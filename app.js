@@ -1,9 +1,10 @@
 var express = require("express"),
     request = require("request"),
     _ = require("underscore"),
-    app = express(),
-    allowedHosts = ['http://tapastreet-facebook.herokuapp.com', 'https://tapastreet-facebook.herokuapp.com'],
-    allowCrossDomain = function(req, res, next) {
+    app = express();
+
+    var allowedHosts = ['http://tapastreet-facebook.herokuapp.com', 'https://tapastreet-facebook.herokuapp.com'];
+    var allowCrossDomain = function(req, res, next) {
     if(allowedHosts.indexOf(req.headers.origin) !== -1 || true) {
         res.header('Access-Control-Allow-Origin', req.headers.origin || "*");
         res.header('Access-Control-Allow-Methods', 'GET');
@@ -26,6 +27,12 @@ app.configure('development', function() {
     app.use(allowCrossDomain);
     app.use(express.logger('dev'));
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});
+
+app.configure('production', function() {
+    app.set('port', process.env.PORT || 4000);
+    app.use(express.bodyParser());
+    app.use(allowCrossDomain);
 });
 
 app.get("/", function(req, res) {
