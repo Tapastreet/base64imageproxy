@@ -20,9 +20,12 @@ var express = require("express"),
     }
 }
 
-app.configure(function() {
+app.configure('development', function() {
+    app.set('port', process.env.PORT || 4000);
     app.use(express.bodyParser());
     app.use(allowCrossDomain);
+    app.use(express.logger('dev'));
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.get("/", function(req, res) {
@@ -62,4 +65,6 @@ app.post("/batch", function(req, res) {
     });
 });
 
-app.listen(process.env.PORT || 8000);
+app.listen(app.get('port'), function(){
+  console.log("Base64ImageProxy server listening on port " + app.get('port'));
+});
