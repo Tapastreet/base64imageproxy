@@ -51,6 +51,9 @@ app.post("/batch", function(req, res) {
             
             if(!error && response.statusCode == 200) {
                 prefix = "data:" + response.headers["content-type"] + ";base64,";
+                // Should not use binary encoding as
+                //     - It will be removed from next versions of Node
+                //     - request will return the body as a ready-to-use buffer if no encoding is specified.
                 image = new Buffer(body.toString(), "binary").toString("base64");
                 images[current.id] = {
                     id: current.id,
